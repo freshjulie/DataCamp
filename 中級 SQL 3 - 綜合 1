@@ -1,0 +1,32 @@
+
+#「日期|Home name | away name| home得分| away得分」
+SELECT
+	  m.date,
+    home.hometeam,
+    away.awayteam,
+    m.home_goal,
+    m.away_goal
+FROM match AS m
+
+# LEFT JOIN「match.id | hometeam name」ON
+	# 連出 Home name 
+	#JOIN的時候要思考，哪個column的數值一樣!可以合併起來?
+    # 可以有home.id?如果有的話就代表，CTE出來的表格不縮限於SELECT裡面出現的格子，而是因為JOIN就等於完全連接整個表格
+    
+LEFT JOIN (
+  SELECT match.id, team.team_long_name AS hometeam
+  FROM match
+  LEFT JOIN team
+  ON match.hometeam_id = team.team_api_id) AS home
+ON home.id = m.id
+
+LEFT JOIN (
+  SELECT match.id, team.team_long_name AS awayteam
+  FROM match
+  LEFT JOIN team
+  -- Get the away team ID in the subquery
+  ON match.awayteam_id = team.team_api_id) AS away
+ON away.id = m.id;
+
+# 假想正確! 耶!思想突破!
+# 之前都覺得JOIN的時候只需要看SELECT裡面篩選出來的格位，所以在ON都會有點卡關
