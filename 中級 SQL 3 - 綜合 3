@@ -1,0 +1,50 @@
+（一）
+SELECT 
+    m.id, 
+    t.team_long_name AS hometeam
+FROM match AS m
+# 把team表格在主場的API上連上去，如此一來，就能創造一個包含match跟名稱的大表格
+LEFT JOIN team AS t 
+ON t.team_api_id = hometeam_id;
+
+（二）
+# 用CTE創造一個 WITH __ AS 來從兩個表格中分別拉出資料
+WITH home AS (
+	SELECT m.id, t.team_long_name AS hometeam
+	FROM match AS m
+	LEFT JOIN team AS t 
+	ON m.hometeam_id = t.team_api_id)
+SELECT *
+FROM home;
+
+(三)
+# 好，創建CTE 「ID | DATE | home name | home goal」
+WITH home AS (
+  SELECT m.id, m.date, 
+  		 t.team_long_name AS hometeam, m.home_goal
+  FROM match AS m
+  LEFT JOIN team AS t 
+  ON m.hometeam_id = t.team_api_id),
+  
+# 把CTE裡面JOIN其他資料 「ID | DATE | away name | away goal」
+# 怎麼JOIN阿 > ^ <
+  # 喔喔不用JOIN, WITH後面要加的話不用重複打WITH 
+  # WITH 第一個CTE AS (限定) , 第二個 AS (限定)
+  # 用逗點就可以
+ (
+  SELECT m.id, m.date, 
+  		 t.team_long_name AS awayteam, m.away_goal
+  FROM match AS m
+  LEFT JOIN team AS t 
+  ON m.awayteam_id = t.team_api_id)
+
+# 創主query
+SELECT 
+   	home.date,
+    home.hometeam,
+    away.awayteam,
+    home.home_goal,
+    away.away_goal
+
+FROM home
+INNER JOIN away
