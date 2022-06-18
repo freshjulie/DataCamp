@@ -1,16 +1,24 @@
-#CTE 練習
--- Set up your CTE
-___ match_list ___ (
+# CTE 練習
+# CTE 寫 WITH 暫存資料庫 AS (設立一個SELECT)
+
+# 先利用CTE定義站存data
+    # 「國家ID|比賽ID」 
+    # ルール：得分大於10
+WITH match_list AS (
     SELECT 
   		country_id, 
-  		___
+  		id
     FROM match
     WHERE (home_goal + away_goal) >= 10)
--- Select league and count of matches from the CTE
+
+# 主要挑選
+    # 「聯賽名稱|比賽數量」 >> 
+    # ルール：>>　
+    # グループ：要計算比賽數量就要有GROUP BY
 SELECT
     l.name AS league,
     COUNT(match_list.id) AS matches
 FROM league AS l
 -- Join the CTE to the league table
-LEFT JOIN ___ ON l.id = ___
+LEFT JOIN match_list ON l.id = match_list.country_id
 GROUP BY l.name;
