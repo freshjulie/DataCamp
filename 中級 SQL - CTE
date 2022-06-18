@@ -1,0 +1,16 @@
+#CTE 練習
+-- Set up your CTE
+___ match_list ___ (
+    SELECT 
+  		country_id, 
+  		___
+    FROM match
+    WHERE (home_goal + away_goal) >= 10)
+-- Select league and count of matches from the CTE
+SELECT
+    l.name AS league,
+    COUNT(match_list.id) AS matches
+FROM league AS l
+-- Join the CTE to the league table
+LEFT JOIN ___ ON l.id = ___
+GROUP BY l.name;
