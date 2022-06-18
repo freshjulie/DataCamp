@@ -1,0 +1,24 @@
+# 設立CTE: WITH 暫時表格 AS
+WITH match_list AS (
+
+# 選取 「國家|總分」
+# ルール：>>　IN (季度AND月份)
+    SELECT 
+  		country_id, 
+  	   (home_goal + away_goal) AS goals
+    FROM match
+    -- Create a list of match IDs to filter data in the CTE
+    WHERE id IN (
+       SELECT id
+       FROM match
+       WHERE season = '2013/2014' AND EXTRACT(MONTH FROM date) = 08))
+       
+#主Query：「國家名稱|平均分」
+SELECT
+	l.name,
+    AVG(match_list.goals)
+FROM league AS l
+# JOIN：拉上CTE中的分數
+# グループ: 總分以國家分組
+LEFT JOIN match_list ON l.id = match_list.country_id
+GROUP BY l.name;
