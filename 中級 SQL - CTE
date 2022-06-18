@@ -12,13 +12,18 @@ WITH match_list AS (
     WHERE (home_goal + away_goal) >= 10)
 
 # 主要挑選
-    # 「聯賽名稱|比賽數量」 >> 
-    # ルール：>>　
-    # グループ：要計算比賽數量就要有GROUP BY
+    # 「聯賽名稱|比賽數量」>> 比賽數量為抽取先前定義的CTE中的符合ルール
+        # CTE 除了寫入目標計算的內容，也要包含共通的ID才能方便JOIN
 SELECT
     l.name AS league,
     COUNT(match_list.id) AS matches
 FROM league AS l
--- Join the CTE to the league table
+    # JOIN : 把CTE中計算的ID接上來
+    # ルール：
+    # グループ：要計算比賽數量就要有GROUP BY
 LEFT JOIN match_list ON l.id = match_list.country_id
 GROUP BY l.name;
+
+# 心得：好我知道我掙扎的點在於LEFT JOIN放在後面的意義。
+# 因為LEAGUE裡面涵蓋的資訊量就只有國名，所以必須先JOIN之後，SELECT才出現。
+# 雖然打代碼時先出現SELECT,但其實運算過程都是從下到上而非上到下。
