@@ -1,0 +1,8 @@
+# 設立「日期|主場隊伍」
+SELECT
+    m.date,
+   (SELECT team_long_name
+    FROM team AS t
+# 可以用WHERE來假JOIN
+    WHERE t.team_api_id = m.hometeam_id) AS hometeam
+FROM match AS m;
