@@ -1,0 +1,33 @@
+# OVER ()
+# RANK () OVER ( XXX DESC)
+# 窗型會最後處理
+
+(一)
+SELECT 
+
+	m.id, 
+  c.name AS country, 
+  m.season,
+	m.home_goal,
+	m.away_goal,
+  
+# 有點不太懂為什麼沒有over()就跑不出來，總之有的話會跑比較快，因為是在抽出來的query中執行query
+	AVG(m.home_goal + m.away_goal)  over() AS overall_avg
+FROM match AS m
+LEFT JOIN country AS c ON m.country_id = c.id;\\
+
+(二)
+SELECT 
+# 選取「聯盟名稱 | 平均分 | 排名」
+SELECT 
+	l.name AS league,
+    AVG(m.home_goal + m.away_goal) AS avg_goals,
+    -- Rank each league according to the average goals
+    RANK() OVER(ORDER BY AVG(m.home_goal + m.away_goal)) AS league_rank
+FROM league AS l
+LEFT JOIN match AS m 
+ON l.id = m.country_id
+WHERE m.season = '2011/2012'
+GROUP BY l.name
+
+ORDER BY league_rank;
