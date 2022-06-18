@@ -1,0 +1,19 @@
+# 設立 WITH 暫存資料 AS match_list
+# 「LEAGUE | Date | Home_goal | Away_goal | total_goals」
+
+WITH match_list AS (
+    SELECT 
+  		l.name AS league, 
+     	m.date, 
+  		m.home_goal, 
+  		m.away_goal,
+       (m.home_goal + m.away_goal) AS total_goals
+    FROM match AS m
+    LEFT JOIN league as l ON m.country_id = l.id)
+    
+# 直接從CTE中SELECT
+SELECT league, date, home_goal, away_goal
+FROM match_list
+
+# 篩選總分大於
+WHERE total_goals >= 10;
